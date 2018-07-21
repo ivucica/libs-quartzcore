@@ -24,7 +24,40 @@
    Boston, MA 02110-1301, USA.
 */
 
+#import <AppKit/AppKit.h>
 #import "DemoController.h"
+
+
+@interface DebugButtonCell : NSButtonCell
+
+@end
+
+@implementation DebugButtonCell
+- (void) _drawBorderAndBackgroundWithFrame: (NSRect)cellFrame
+                                    inView: (NSView*)controlView
+{
+  NSLog(@"kmu");
+  [super _drawBorderAndBackgroundWithFrame: cellFrame inView: controlView];
+}
+@end
+
+
+@interface DebugButton : NSButton
+@end
+
+
+@implementation DebugButton
++ initialize
+{
+  [super initialize];
+  [self setCellClass: [DebugButtonCell class]];
+}
+- (void) drawRect: (NSRect)aRect
+{
+  [super drawRect: aRect];
+  NSLog(@"DebugButton: drawRect");
+}
+@end
 
 @implementation DemoController
 
@@ -39,7 +72,7 @@
                                         styleMask: NSTitledWindowMask | NSClosableWindowMask
                                           backing: NSBackingStoreBuffered
                                             defer: NO];
-  self->_mainView = [[NSButton alloc] initWithFrame: [[self->_window contentView] frame]];
+  self->_mainView = [[DebugButton alloc] initWithFrame: [[self->_window contentView] frame]];
   [self->_mainView setTitle: @"hello"];
   [self->_window setContentView: self->_mainView];
   [self->_mainView setWantsLayer: YES];

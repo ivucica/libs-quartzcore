@@ -73,20 +73,22 @@
 
 }
 
-- (void)drawLayer: (CALayer *)layer 
+- (void)drawLayer: (CALayer *)layer
         inContext: (CGContextRef)cgContext
 {
   float width = [self bounds].size.width;
   float height = [self bounds].size.height;
   NSLog(@"!!!!!!!!!! NSView %@ is called to draw into %p; w %g h %g", NSStringFromSelector(_cmd), cgContext, width, height);
-  /* Draw dummy content into the context
+
+  #if 0
+  /* Draw dummy content into the context */
   CGRect rect = CGRectMake(50, 50, width/2.0, height/2.0);
-  CGContextSetRGBStrokeColor(ctx, 0, 0, 1, 1);
-  CGContextSetRGBFillColor(ctx, 1, 0, 0, 1);
-  CGContextSetLineWidth(ctx, 4.0);
-  CGContextStrokeRect(ctx, rect);
-  CGContextFillRect(ctx, rect);
-  */
+  CGContextSetRGBStrokeColor(cgContext, 0, 0, 1, 1);
+  CGContextSetRGBFillColor(cgContext, 1, 0, 0, 1);
+  CGContextSetLineWidth(cgContext, 4.0);
+  CGContextStrokeRect(cgContext, rect);
+  CGContextFillRect(cgContext, rect);
+  #endif
 
   NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort: cgContext
                                                                             flipped: NO];
@@ -96,7 +98,7 @@
   if (surface == nil)
     {
       class opalSurface = NSClassFromString(@"OpalSurface");
-      [opalSurface 
+      [opalSurface
     }*/
   NSLog(@"nsContext is at %p", nsContext);
 NSLog(@"%g %g %g %g", [self frame].origin.x, [self frame].origin.y, [self frame].size.width, [self frame].size.height);
@@ -104,6 +106,8 @@ NSLog(@"%g %g %g %g", [self bounds].origin.x, [self bounds].origin.y, [self boun
 
   NSGraphicsContext * old = [NSGraphicsContext currentContext];
   [NSGraphicsContext setCurrentContext: nsContext];
+  [self setNeedsDisplay: YES];
+  NSLog(@"displaying rect %g %g %g %g which is %s empty", [self frame].origin.x, [self frame].origin.y, [self frame].size.width, [self frame].size.height, NSIsEmptyRect([self frame]) ? "" : "not");
   [self displayRectIgnoringOpacity: [self frame] // ... or bounds?
                          inContext: nsContext];
 
@@ -111,7 +115,7 @@ NSLog(@"%g %g %g %g", [self bounds].origin.x, [self bounds].origin.y, [self boun
   int x = 0, y = 0;
   [[nsContext currentGState] GSCurrentSurface: &surface :&x :&y];
   NSRect translatedBounds = [self bounds]; // doesn't help, maybe unnecessary
-  translatedBounds.origin.y -= translatedBounds.size.height;
+  //translatedBounds.origin.y -= translatedBounds.size.height;
   [surface handleExposeRect: translatedBounds];
 
   [NSGraphicsContext setCurrentContext: old];
@@ -172,7 +176,7 @@ NSLog(@"%g %g %g %g", [self bounds].origin.x, [self bounds].origin.y, [self boun
 
 }
 
-- (BOOL) _gsAddCARenderer: (CARenderer*)customCARenderer 
+- (BOOL) _gsAddCARenderer: (CARenderer*)customCARenderer
 {
   GSCAData *currGSCAData = self->_coreAnimationData;
   if (currGSCAData == nil)
@@ -226,7 +230,7 @@ NSLog(@"%g %g %g %g", [self bounds].origin.x, [self bounds].origin.y, [self boun
   NSOpenGLContext *currGLContext = currGSCAData->_GLContext;
   if (currGLContext == nil)
     {
-      NSOpenGLContext *context = [[NSOpenGLContext alloc] 
+      NSOpenGLContext *context = [[NSOpenGLContext alloc]
                                   initWithFormat: [NSOpenGLView defaultPixelFormat]
                                     shareContext: nil];
       ASSIGN(currGLContext, context);

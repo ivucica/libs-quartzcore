@@ -96,6 +96,9 @@
 
 -(void) drawRect: (NSTimer*)t
 {
+  static int frameCounter = 0;
+  frameCounter++;
+  NSLog(@"\033[0;31mbegin frame %d\033[0m", frameCounter);
   NSLog(@"mainView is at %p", self->_mainView);
   //[[self->_mainView _gsCreateOpenGLContext] makeCurrentContext];
   NSLog(@"Context is at %p", [self->_mainView _gsCreateOpenGLContext]);
@@ -123,6 +126,7 @@
   glFlush();
   [[self->_mainView _gsCreateOpenGLContext] flushBuffer];
 
+  NSLog(@"\033[0;31mend frame %d\033[0m", frameCounter);
 }
 
 -(BOOL)applicationShouldTerminateAfterLastWindowClosed: (id)sender

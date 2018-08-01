@@ -719,6 +719,10 @@
 
     }
 
+#if 1
+  int debug_color[4] = { 1, 1, 1, 1 };
+#endif
+
   // if there are some contents, draw them
   if ([layer contents])
     {
@@ -728,7 +732,7 @@
       if ([layerContents isKindOfClass: [CABackingStore class]])
         {
           CABackingStore * backingStore = layerContents;
-
+debug_color[0] = 0; debug_color[2] = 0;
           texture = [backingStore contentsTexture];
         }
 #if GNUSTEP
@@ -740,6 +744,7 @@
         {
           CGImageRef image = (CGImageRef)layerContents;
 
+debug_color[1] = 0; debug_color[2] = 0;
           texture = [CAGLTexture texture];
           [texture loadImage: image];
         }
@@ -759,6 +764,16 @@
       glColorPointer(4, GL_FLOAT, 0, whiteColor);
       glDrawArrays(GL_TRIANGLES, 0, 6);
       [texture unbind];
+
+
+#if 1
+      glDisable([texture textureTarget]);
+  glDisableClientState(GL_COLOR_ARRAY);
+	  glColor4f(0,1,0,1);
+	  glLineWidth(3);
+      glDrawArrays(GL_LINE_LOOP, 0, 6);
+  glEnableClientState(GL_COLOR_ARRAY);
+#endif
 
     }
 

@@ -106,6 +106,8 @@ NSLog(@"%g %g %g %g", [self bounds].origin.x, [self bounds].origin.y, [self boun
 
   NSGraphicsContext * old = [NSGraphicsContext currentContext];
   [NSGraphicsContext setCurrentContext: nsContext];
+  [NSClassFromString(@"OpalSurface") setSaveImages: YES];
+  BOOL needsDisplay = [self needsDisplay];
   [self setNeedsDisplay: YES];
   NSLog(@"displaying rect %g %g %g %g which is %s empty", [self frame].origin.x, [self frame].origin.y, [self frame].size.width, [self frame].size.height, NSIsEmptyRect([self frame]) ? "" : "not");
   [self displayRectIgnoringOpacity: [self frame] // ... or bounds?
@@ -118,6 +120,8 @@ NSLog(@"%g %g %g %g", [self bounds].origin.x, [self bounds].origin.y, [self boun
   //translatedBounds.origin.y -= translatedBounds.size.height;
   [surface handleExposeRect: translatedBounds];
 
+  [self setNeedsDisplay: needsDisplay];
+  [NSClassFromString(@"OpalSurface") setSaveImages: NO];
   [NSGraphicsContext setCurrentContext: old];
 
   CGImageRef image = CGBitmapContextCreateImage(cgContext);

@@ -584,13 +584,16 @@ GSCA_OBSERVABLE_SETTER(setShadowOffset, CGSize, shadowOffset, CGSizeEqualToSize)
 
       CGContextSaveGState ([_backingStore context]);
       CGContextClipToRect ([_backingStore context], [self bounds]);
+      NSDebugLLog(@"CALayer", @"\033[0;34mdrawing into context\033[0m");
       [self drawInContext: [_backingStore context]];
+      NSDebugLLog(@"CALayer", @"\033[0;34mend drawing into context\033[0m");
       CGContextRestoreGState ([_backingStore context]);
 
       /* Call -refresh on backing store to fill its texture */
       if (![self contents])
         [self setContents: [self backingStore]];
 
+      NSDebugLLog(@"CALayer", @"%@: refreshing backing store", NSStringFromSelector(_cmd));
       [self.backingStore refresh];
     }
 }

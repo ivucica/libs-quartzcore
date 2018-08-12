@@ -101,7 +101,7 @@
   NSLog(@"\033[0;31mbegin frame %d\033[0m", frameCounter);
   NSLog(@"mainView is at %p", self->_mainView);
   //[[self->_mainView _gsCreateOpenGLContext] makeCurrentContext];
-  NSLog(@"Context is at %p", [self->_mainView _gsCreateOpenGLContext]);
+  NSLog(@"glContext is at %p", [self->_mainView _gsCreateOpenGLContext]);
   NSLog(@"_gsLayer %p", [self->_mainView _gsLayer]);
   [[self->_mainView _gsLayer] setNeedsDisplay];
 

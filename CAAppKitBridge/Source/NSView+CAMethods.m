@@ -27,7 +27,10 @@
 #import "GSCAData.h"
 #import "NSView+CAMethods.h"
 
+static BOOL GSCAWithinViewDrawLayer = NO;
+
 @implementation NSView (NSViewCAmethods)
+
 - (CALayer*) _gsLayer
 {
   if (self->_coreAnimationData != nil)
@@ -76,6 +79,7 @@
 - (void)drawLayer: (CALayer *)layer
         inContext: (CGContextRef)cgContext
 {
+  GSCAWithinViewDrawLayer = YES;
   float width = [self bounds].size.width;
   float height = [self bounds].size.height;
   NSLog(@"!!!!!!!!!! NSView %@ is called to draw into %p; w %g h %g", NSStringFromSelector(_cmd), cgContext, width, height);
@@ -100,7 +104,7 @@
       class opalSurface = NSClassFromString(@"OpalSurface");
       [opalSurface
     }*/
-  NSLog(@"nsContext is at %p", nsContext);
+  NSLog(@"nsContext is at %p and is backed by %p (which should be %p)", nsContext, [nsContext graphicsPort], cgContext);
 NSLog(@"%g %g %g %g", [self frame].origin.x, [self frame].origin.y, [self frame].size.width, [self frame].size.height);
 NSLog(@"%g %g %g %g", [self bounds].origin.x, [self bounds].origin.y, [self bounds].size.width, [self bounds].size.height);
 
@@ -136,6 +140,7 @@ NSLog(@"%g %g %g %g", [self bounds].origin.x, [self bounds].origin.y, [self boun
   [data writeToFile:@"/tmp/ovojeruzno.png" atomically:YES];
 
   NSLog(@"!!!!!!!! NSView %@ : COMPLETE drawing into %p", NSStringFromSelector(_cmd), cgContext);
+  GSCAWithinViewDrawLayer = NO;
 }
 
 - (void) _gsRecursiveSetWantsLayer: (BOOL)isRoot
